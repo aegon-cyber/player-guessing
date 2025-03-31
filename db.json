@@ -1,0 +1,144 @@
+{
+    "players": [
+        {
+            "name": "Lionel Messi",
+            "nationality": "Argentina",
+            "club": "Inter Miami",
+            "position": "Forward",
+            "age": 36
+        },
+        {
+            "name": "Erling Haaland",
+            "nationality": "Norway",
+            "club": "Manchester City",
+            "position": "Forward",
+            "age": 23
+        },
+        {
+            "name": "Kylian Mbappe",
+            "nationality": "France",
+            "club": "Paris Saint-Germain",
+            "position": "Forward",
+            "age": 25
+        },
+        {
+            "name": "Kevin De Bruyne",
+            "nationality": "Belgium",
+            "club": "Manchester City",
+            "position": "Midfielder",
+            "age": 32
+        },
+        {
+            "name": "Jude Bellingham",
+            "nationality": "England",
+            "club": "Real Madrid",
+            "position": "Midfielder",
+            "age": 20
+        },
+        {
+            "name": "Vinicius Jr",
+            "nationality": "Brazil",
+            "club": "Real Madrid",
+            "position": "Forward",
+            "age": 23
+        },
+        {
+            "name": "Mohamed Salah",
+            "nationality": "Egypt",
+            "club": "Liverpool",
+            "position": "Forward",
+            "age": 31
+        },
+        {
+            "name": "Bruno Fernandes",
+            "nationality": "Portugal",
+            "club": "Manchester United",
+            "position": "Midfielder",
+            "age": 29
+        },
+        {
+            "name": "Harry Kane",
+            "nationality": "England",
+            "club": "Bayern Munich",
+            "position": "Forward",
+            "age": 30
+        },
+        {
+            "name": "Virgil van Dijk",
+            "nationality": "Netherlands",
+            "club": "Liverpool",
+            "position": "Defender",
+            "age": 32
+        },
+        {
+            "name": "Rodri",
+            "nationality": "Spain",
+            "club": "Manchester City",
+            "position": "Midfielder",
+            "age": 27
+        },
+        {
+            "name": "Bukayo Saka",
+            "nationality": "England",
+            "club": "Arsenal",
+            "position": "Forward",
+            "age": 22
+        },
+        {
+            "name": "Victor Osimhen",
+            "nationality": "Nigeria",
+            "club": "Napoli",
+            "position": "Forward",
+            "age": 25
+        },
+        {
+            "name": "Pedri",
+            "nationality": "Spain",
+            "club": "Barcelona",
+            "position": "Midfielder",
+            "age": 21
+        },
+        {
+            "name": "Thibaut Courtois",
+            "nationality": "Belgium",
+            "club": "Real Madrid",
+            "position": "Goalkeeper",
+            "age": 31
+        },
+        {
+            "name": "Joshua Kimmich",
+            "nationality": "Germany",
+            "club": "Bayern Munich",
+            "position": "Midfielder",
+            "age": 29
+        },
+        {
+            "name": "Rafael Leao",
+            "nationality": "Portugal",
+            "club": "AC Milan",
+            "position": "Forward",
+            "age": 24
+        },
+        {
+            "name": "Lautaro Martinez",
+            "nationality": "Argentina",
+            "club": "Inter Milan",
+            "position": "Forward",
+            "age": 26
+        },
+        {
+            "name": "Phil Foden",
+            "nationality": "England",
+            "club": "Manchester City",
+            "position": "Midfielder",
+            "age": 23
+        },
+        {
+            "name": "Federico Valverde",
+            "nationality": "Uruguay",
+            "club": "Real Madrid",
+            "position": "Midfielder",
+            "age": 25
+        }
+    ]
+}

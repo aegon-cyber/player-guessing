@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<!-- Version 1.2 -->
+<!-- Last Updated: 2024 -->
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Player Guessing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://images.unsplash.com/photo-1459865264687-595d652de67e?q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .start-again-btn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: linear-gradient(to right, #4a90e2, #5c6bc0);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.start-again-btn:hover {
+    background: linear-gradient(to right, #5c6bc0, #4a90e2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.start-again-btn:active {
+    transform: translateY(1px);
+}
+
+                /* 修改计时器和尝试次数的样式，使其在一行显示 */
+                .stats-container {
+                    display: flex;
+                    justify-content: center;
+                    margin: 15px auto;
+                    background: rgba(0, 0, 0, 0.5);
+                    border-radius: 10px;
+                    padding: 10px;
+                    width: 80%;
+                    max-width: 400px;
+                }
+
+                .stats-box {
+                    flex: 1;
+                    text-align: center;
+                    padding: 10px 15px;
+                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                }
+
+                .stats-box:last-child {
+                    border-right: none;
+                }
+
+                .stats-label {
+                    color: rgba(255, 255, 255, 0.7);
+                    font-size: 14px;
+                    margin-bottom: 5px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    display: inline-block;
+                    margin-right: 10px;
+                }
+
+                .stats-value {
+                    color: white;
+                    font-size: 28px;
+                    font-weight: bold;
+                    display: inline-block;
+                }
+
+                #timeLeft {
+                    color: #4a90e2;
+                }
+
+                #guessCounter {
+                    color: #52c41a;
+                }
+            
+            /* 现有样式继续保留 */
+        .logo {
+            margin-top: 100px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 48px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .subtitle {
+            color: #ccc;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .input-container {
+            margin: 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* 修改自动补全样式 */
+        .autocomplete-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-top: 5px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            color: white;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .autocomplete-item.selected {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .autocomplete-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 修改历史记录样式 */
+        .guess-history {
+            background: transparent;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: rgba(35, 35, 40, 0.95);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .result-table th, .result-table td {
+            padding: 12px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-table th {
+            background: rgba(25, 25, 30, 0.95);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-correct {
+            background: rgba(82, 196, 26, 0.2);
+            border: 1px solid rgba(82, 196, 26, 0.3) !important;
+            color: #52c41a !important;
+        }
+
+        .status-close {
+            background: rgba(250, 173, 20, 0.2);
+            border: 1px solid rgba(250, 173, 20, 0.3) !important;
+            color: #faad14 !important;
+        }
+
+        .status-wrong {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .guess-item {
+            background: rgba(0, 0, 0, 0.6);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .guess-header {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .bingo-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 1000;
+            color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .bingo-text {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .win-text {
+            color: #52c41a;
+            text-shadow: 0 0 10px rgba(82, 196, 26, 0.5);
+        }
+
+        .lose-text {
+            color: #ff4d4f;
+            text-shadow: 0 0 10px rgba(255, 77, 79, 0.5);
+        }
+
+        #playerInfo {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        #playerInfo h2 {
+            color: #52c41a;
+            margin-bottom: 20px;
+        }
+
+        #playerInfo p {
+            margin: 8px 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 修改HTML结构部分 -->
+    <div class="container">
+        <div class="logo">
+            <h1>PLAYER GUESSING</h1>
+            <div class="subtitle">Guess the mystery player</div>
+            <!-- 修改HTML结构，使时间和尝试次数在一行显示 -->
+            <div class="stats-container">
+                <div class="stats-box">
+                    <div class="stats-label">Time Left:</div>
+                    <div class="stats-value"><span id="timeLeft">60</span>s</div>
+                </div>
+                <div class="stats-box">
+                    <div class="stats-label">Attempts:</div>
+                    <div class="stats-value"><span id="guessCounter">10</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 其他内容 -->
+    </div>
+
+    <div class="input-container">
+        <div class="autocomplete-container">
+            <div class="search-box">
+                <input type="text" id="playerInput" placeholder="Type a player's name..." 
+                       onkeyup="handleInput(event)" onkeydown="handleKeyDown(event)">
+                <div class="search-icon">🔍</div>
+            </div>
+            <div id="autocompleteList" class="autocomplete-list"></div>
+        </div>
+    </div>
+
+    <div class="guess-history" id="guessHistory">
+        <!-- 猜测记录将在这里堆叠显示 -->
+    </div>
+
+    <div class="bingo-container" id="bingoContainer">
+        <div class="bingo-text" id="resultText">BINGO!</div>
+        <div id="playerInfo"></div>
+        <button id="startAgainBtn" class="start-again-btn">Start Again</button>
+    </div>
+
+<script>
+    // 获取球员数据
+    let players = [];
+    let playerNames = [];
+    let selectedIndex = -1;
+    let filteredPlayers = [];
+    let answerPlayer;
+    let guessCount = 0;  // 添加猜测次数计数器
+    const MAX_GUESSES = 10;  // 设置最大猜测次数
+    let timeLeft = 60;  // 添加计时器变量
+    let timerInterval;  // 计时器间隔
+    let gameStarted = false;  // 游戏是否已开始
+
+    // 加载数据库并设置随机答案
+    async function loadPlayers() {
+        try {
+            const response = await fetch('./db.json');
+            const data = await response.json();
+            players = data.players;
+            playerNames = players.map(player => player.name);
+            
+            // 随机选择一名球员作为答案
+            const randomIndex = Math.floor(Math.random() * players.length);
+            answerPlayer = players[randomIndex];
+            console.log('游戏已准备就绪！');
+        } catch (error) {
+            console.error('Error loading players:', error);
+        }
+    }
+
+    // 更新剩余次数显示
+    function updateGuessCounter() {
+        document.getElementById('guessCounter').textContent = MAX_GUESSES - guessCount;
+    }
+
+    // 启动计时器
+    function startTimer() {
+        if (!gameStarted) {
+            gameStarted = true;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timeLeft').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showError(`时间到！正确答案是 ${answerPlayer.name}`);
+                    showBingo(answerPlayer, false); // 确保传入false参数显示YOU LOSE
+                    document.getElementById('playerInput').disabled = true; // 禁用输入框
+                }
+            }, 1000);
+        }
+    }
+
+    // 页面加载时获取数据和初始化
+    window.addEventListener('DOMContentLoaded', async () => {
+        await loadPlayers();
+        updateGuessCounter();
+        document.getElementById('timeLeft').textContent = timeLeft;
+    });
+
+    // 处理输入
+    function handleInput(event) {
+        const input = event.target.value.toLowerCase();
+        const autocompleteList = document.getElementById('autocompleteList');
+    
+        // 如果是方向键，处理选择逻辑
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            handleArrowKeys(event.key === 'ArrowDown' ? 1 : -1);
+            return;
+        }
+    
+        // 改进的球员匹配逻辑
+        filteredPlayers = playerNames.filter(name => 
+            name.toLowerCase().includes(input)
+        ).slice(0, 5);
+    
+        // 显示建议列表
+        if (input && filteredPlayers.length > 0) {
+            selectedIndex = -1;
+            autocompleteList.innerHTML = filteredPlayers
+                .map((player, index) => `
+                    <div class="autocomplete-item" 
+                         onclick="selectPlayer('${player}')"
+                         data-index="${index}">
+                        ${player}
+                    </div>
+                `).join('');
+            autocompleteList.style.display = 'block';
+        } else {
+            autocompleteList.style.display = 'none';
+        }
+    }
+
+    // 处理键盘按下事件
+    function handleKeyDown(event) {
+        const autocompleteList = document.getElementById('autocompleteList');
+        
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (autocompleteList.style.display === 'block' && selectedIndex >= 0) {
+                selectPlayer(filteredPlayers[selectedIndex]);
+            } else {
+                checkPlayer();
+            }
+        } else if (event.key === 'Escape') {
+            autocompleteList.style.display = 'none';
+        }
+    }
+
+    // 选择球员
+    function selectPlayer(name) {
+        document.getElementById('playerInput').value = name;
+        document.getElementById('autocompleteList').style.display = 'none';
+        checkPlayer(); // 自动提交选择的球员
+    }
+
+    // 处理方向键
+    function handleArrowKeys(direction) {
+        const items = document.querySelectorAll('.autocomplete-item');
+        items[selectedIndex]?.classList.remove('selected');
+
+        selectedIndex = (selectedIndex + direction + filteredPlayers.length) % filteredPlayers.length;
+        items[selectedIndex]?.classList.add('selected');
+
+        // 更新输入框的值
+        document.getElementById('playerInput').value = filteredPlayers[selectedIndex];
+    }
+
+    // 检查球员函数中的修改
+    async function checkPlayer() {
+        const playerName = document.getElementById('playerInput').value;
+        if (!playerName) return;
+    
+        // 第一次输入时启动计时器
+        if (!gameStarted) {
+            startTimer();
+        }
+
+        try {
+            // 检查时间
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                showError(`时间到！正确答案是 ${answerPlayer.name}`);
+                showBingo(answerPlayer, false); // 确保传入false参数
+                return;
+            }
+
+            // 先检查是否已经达到最大猜测次数
+            if (guessCount >= MAX_GUESSES - 1) { // 修改这里，当即将达到最大次数时
+                guessCount++;
+                updateGuessCounter();
+                clearInterval(timerInterval);
+                showError(`已达到最大猜测次数(${MAX_GUESSES}次)，正确答案是 ${answerPlayer.name}`);
+                showBingo(answerPlayer, false); // 确保传入false参数
+                return;
+            }
+
+            const guessedPlayer = players.find(p => p.name === playerName);
+            
+            if (!guessedPlayer) {
+                showError('未找到该球员');
+                return;
+            }
+
+            // 增加猜测次数并更新显示
+            guessCount++;
+            updateGuessCounter();
+            
+            // 清空输入框
+            document.getElementById('playerInput').value = '';
+            
+            // 检查是否猜对
+            if (guessedPlayer.name === answerPlayer.name) {
+                clearInterval(timerInterval);
+                showBingo(answerPlayer, true);
+                return;
+            }
+            
+            // 创建年龄比较提示
+            let ageHint = '';
+            if (guessedPlayer.age < answerPlayer.age) {
+                ageHint = ' <span class="age-hint-older">(older)</span>'; // 答案球员比猜测球员年龄大
+            } else if (guessedPlayer.age > answerPlayer.age) {
+                ageHint = ' <span class="age-hint-younger">(younger)</span>'; // 答案球员比猜测球员年龄小
+            }
+            
+            // 删除错误放置的CSS样式
+            
+            // 使用1.4版本的样式添加猜测历史
+            const hints = [
+                { status: guessedPlayer.nationality === answerPlayer.nationality ? 'status-correct' : 'status-wrong' },
+                { status: guessedPlayer.club === answerPlayer.club ? 'status-correct' : 'status-wrong' },
+                { status: guessedPlayer.position === answerPlayer.position ? 'status-correct' : 'status-wrong' },
+                { status: guessedPlayer.age === answerPlayer.age ? 'status-correct' : 
+                          (Math.abs(guessedPlayer.age - answerPlayer.age) <= 2 ? 'status-close' : 'status-wrong') }
+            ];
+            
+            // 添加猜测历史，传递年龄提示
+            addGuessToHistory(playerName, hints, ageHint);
+            
+            if (playerName === answerPlayer.name) {
+                clearInterval(timerInterval);
+                showBingo(guessedPlayer, true); // 添加true参数表示成功
+            }
+
+            document.getElementById('playerInput').value = '';
+            
+        } catch (error) {
+            console.error('Error:', error);
+            showError('发生错误，请重试');
+        }
+    }
+
+    // 修改addGuessToHistory函数，添加ageHint参数
+    function addGuessToHistory(playerName, hints, ageHint = '') {
+        const historyContainer = document.getElementById('guessHistory');
+        
+        // 检查是否已经存在表格
+        let table = document.querySelector('.result-table');
+        
+        if (!table) {
+            // 如果是第一次猜测，创建表格和表头
+            table = document.createElement('table');
+            table.className = 'result-table';
+            
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>NAME</th>
+                    <th>TEAM</th>
+                    <th>NAT</th>
+                    <th>AGE</th>
+                    <th>ROLE</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+            
+            // 创建tbody
+            const tbody = document.createElement('tbody');
+            table.appendChild(tbody);
+            
+            historyContainer.appendChild(table);
+        }
+        
+        // 添加新的数据行
+        const tbody = table.querySelector('tbody');
+        const player = players.find(p => p.name === playerName);
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${player.name}</td>
+            <td class="${hints[1].status}">${player.club}</td>
+            <td class="${hints[0].status}">${player.nationality}</td>
+            <td class="${hints[3].status}">${player.age}${ageHint}</td>
+            <td class="${hints[2].status}">${player.position}</td>
+        `;
+        
+        // 将新行插入到tbody的顶部
+        tbody.insertBefore(row, tbody.firstChild);
+    }
+
+    function showError(message) {
+        const input = document.getElementById('playerInput');
+        input.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+        input.placeholder = message;
+        input.value = '';
+
+        setTimeout(() => {
+            input.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            input.placeholder = 'Type a player\'s name...';
+        }, 2000);
+    }
+
+    function handleArrowKeys(direction) {
+        const items = document.querySelectorAll('.autocomplete-item');
+        items[selectedIndex]?.classList.remove('selected');
+
+        selectedIndex = (selectedIndex + direction + filteredPlayers.length) % filteredPlayers.length;
+        items[selectedIndex]?.classList.add('selected');
+
+        // 更新输入框的值
+        document.getElementById('playerInput').value = filteredPlayers[selectedIndex];
+    }
+
+    function selectPlayer(name) {
+        document.getElementById('playerInput').value = name;
+        document.getElementById('autocompleteList').style.display = 'none';
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const autocompleteList = document.getElementById('autocompleteList');
+            
+            if (autocompleteList.style.display === 'block' && selectedIndex >= 0) {
+                document.getElementById('playerInput').value = filteredPlayers[selectedIndex];
+                autocompleteList.style.display = 'none';
+            }
+            checkPlayer();
+        }
+    }
+
+  
+        
+        function showBingo(player, isWin = true) {
+            const container = document.getElementById('bingoContainer');
+            const resultText = document.getElementById('resultText');
+            const info = document.getElementById('playerInfo');
+            
+            // 根据胜负设置不同的文本和样式
+            if (isWin) {
+                resultText.textContent = 'BINGO!';
+                resultText.className = 'bingo-text win-text';
+            } else {
+                resultText.textContent = 'YOU LOSE';
+                resultText.className = 'bingo-text lose-text';
+            }
+            
+            info.innerHTML = `
+                <h2>${player.name}</h2>
+                <p>年龄: ${player.age}</p>
+                <p>国籍: ${player.nationality}</p>
+                <p>俱乐部: ${player.club}</p>
+                <p>位置: ${player.position}</p>
+                <p>身价: ${player.market_value}</p>
+            `;
+            
+            container.style.display = 'block';
+        
+            // 添加动画效果
+            container.style.animation = 'fadeIn 0.5s';
+        }
+    
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadPlayers();
+            updateGuessCounter();
+            document.getElementById('timeLeft').textContent = timeLeft;
+            
+            // 添加重新开始按钮的事件监听
+            document.getElementById('startAgainBtn').addEventListener('click', function() {
+                location.reload(); // 刷新页面重新开始
+            });
+        });
+    
+        // 删除这段重复的代码
+        /*
+            // 检查是否已经存在表格
+            let table = document.querySelector('.result-table');
+            
+            if (!table) {
+                // 如果是第一次猜测，创建表格和表头
+                table = document.createElement('table');
+                table.className = 'result-table';
+                
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <th>NAME</th>
+                        <th>TEAM</th>
+                        <th>NAT</th>
+                        <th>AGE</th>
+                        <th>ROLE</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+                
+                // 创建tbody
+                const tbody = document.createElement('tbody');
+                table.appendChild(tbody);
+                
+                historyContainer.appendChild(table);
+            }
+            
+            // 添加新的数据行
+            const tbody = table.querySelector('tbody');
+            const player = players.find(p => p.name === playerName);
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${player.name}</td>
+                <td class="${hints[1].status}">${player.club}</td>
+                <td class="${hints[0].status}">${player.nationality}</td>
+                <td class="${hints[3].status}">${player.age}</td>
+                <td class="${hints[2].status}">${player.position}</td>
+            `;
+            
+            // 将新行插入到tbody的顶部
+            tbody.insertBefore(row, tbody.firstChild);
+        */
+    </script>
+    </body>
+    </html>
+
